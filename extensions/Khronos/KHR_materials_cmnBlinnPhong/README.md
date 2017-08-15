@@ -65,7 +65,28 @@ The Blinn-Phong material model is defined by the following properties:
 * `specular` - Specular color of the material
 * `shininess` - Shininess factor of the specular color
 
-TODO: EXPLAIN FURTHER 
+This equation is complex and detailed via the ACM, so it is not detailed here. Refer to “Models of Light Reflection for Computer Synthesized Pictures,” SIGGRAPH 77, pp 192-198 http://portal.acm.org/citation.cfm?id=563893.
+
+The following code illustrates the basic computation:
+
+```
+diffuseTerm   = diffuseFactor   * diffuseTexture 
+specularTerm  = specularFactor  * specularShininessTexture.rgb 
+shineTerm     = shininessFactor * specularShininessTexture.a
+emissiveTerm  = emissiveFactor  * emissiveTexture // core Materials spec
+occlusionTerm = occlusionFactor * occlusionTexture // core Materials spec 
+
+color = emissiveTerm + occlusionTerm * (diffuseTerm * max(N * L, 0) + specularTerm * max(H * N, 0)^shineTerm)
+```
+
+where
+
+* `N` – Normal vector
+* `L` – Light vector
+* `H` – Half-angle vector,calculated as halfway between the unit Eye and Light vectors, using the
+equation H= normalize(I+L)
+
+Textures are optional, and if provided, will modulate the base Factor value. Note that `specularShininessTexture` contains the specular modulation as the rgb components and shininess modulation as the alpha component. 
 
 The following table lists the allowed types and ranges for the specular-glossiness model:
 
